@@ -20,28 +20,44 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Learing warehouse">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="Redis详解（四）—— redis的底层数据结构目录  1、演示数据类型的实现  2、简单动态字符串  3、链表  4、字典  5、跳跃表  6、整数集合  7、压缩列表  8、总结      1、演示数据类型的实现　　上篇博客我们在介绍 key 相关命令的时候，介绍了如下命令： 1OBJECT ENCODING    key   　　该命令是用来显示那五大数据类型的底层数据结构。 　　比如对于">
+<meta property="og:type" content="article">
+<meta property="og:title" content="data struct of Redis">
+<meta property="og:url" content="http://example.com/2020/10/18/redis%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
 <meta property="og:site_name" content="Learing warehouse">
+<meta property="og:description" content="Redis详解（四）—— redis的底层数据结构目录  1、演示数据类型的实现  2、简单动态字符串  3、链表  4、字典  5、跳跃表  6、整数集合  7、压缩列表  8、总结      1、演示数据类型的实现　　上篇博客我们在介绍 key 相关命令的时候，介绍了如下命令： 1OBJECT ENCODING    key   　　该命令是用来显示那五大数据类型的底层数据结构。 　　比如对于">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/1epPufMIjdwvO97.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/c1nG8lmzZobvSKg.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/pXHqaYs47j6ywPV.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/ubSGkdfotlEAqmj.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/JuMds5UjzYNn93e.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/9IJB7VibaQgFG8K.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/H5BXDyTbx7lAEGU.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/hQuVDxes31KznrX.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/fW8YOCh54lxSosw.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/18/F2Eow7Grk46tpW8.png">
+<meta property="article:published_time" content="2020-10-18T14:17:06.000Z">
+<meta property="article:modified_time" content="2020-10-18T14:57:42.936Z">
 <meta property="article:author" content="StoneGY">
+<meta property="article:tag" content="Redis data struct">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/10/18/1epPufMIjdwvO97.png">
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2020/10/18/redis%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>Learing warehouse</title>
+  <title>data struct of Redis | Learing warehouse</title>
   
 
 
@@ -150,9 +166,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
@@ -168,10 +185,9 @@
       <meta itemprop="name" content="Learing warehouse">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/18/redis%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">data struct of Redis</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          data struct of Redis
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -204,7 +220,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="Redis详解（四）——-redis的底层数据结构"><a href="#Redis详解（四）——-redis的底层数据结构" class="headerlink" title="Redis详解（四）—— redis的底层数据结构"></a><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ysocean/p/9080942.html">Redis详解（四）—— redis的底层数据结构</a></h1><p><strong>目录</strong></p>
+        <h1 id="Redis详解（四）——-redis的底层数据结构"><a href="#Redis详解（四）——-redis的底层数据结构" class="headerlink" title="Redis详解（四）—— redis的底层数据结构"></a><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ysocean/p/9080942.html">Redis详解（四）—— redis的底层数据结构</a></h1><p><strong>目录</strong></p>
 <ul>
 <li><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ysocean/p/9080942.html#_label0">1、演示数据类型的实现</a></p>
 </li>
@@ -350,420 +366,34 @@
 <p>　　整数集合是集合键的底层实现之一，底层由数组构成，升级特性能尽可能的节省内存。</p>
 <p>　　压缩列表是Redis为节省内存而开发的顺序型数据结构，通常作为列表键和哈希键的底层实现之一。</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/15/Spring%20IOC%20Container/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://raw.githubusercontent.com/sunnygy/blogImages/master/timg.jpg">
-      <meta itemprop="name" content="StoneGY">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Learing warehouse">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/15/Spring%20IOC%20Container/" class="post-title-link" itemprop="url">spring IOC Container</a>
-        </h2>
+          <div class="post-tags">
+              <a href="/tags/Redis-data-struct/" rel="tag"><i class="fa fa-tag"></i> Redis data struct</a>
+          </div>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2020-10-15 22:41:48 / Modified: 22:59:28" itemprop="dateCreated datePublished" datetime="2020-10-15T22:41:48+08:00">2020-10-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1-The-differenet-role-of-ApplicationContext-and-BeanFactory-in-IOC-Container"><a href="#1-The-differenet-role-of-ApplicationContext-and-BeanFactory-in-IOC-Container" class="headerlink" title="1.The  differenet role  of  ApplicationContext and BeanFactory  in IOC Container"></a>1.The  differenet role  of  ApplicationContext and BeanFactory  in IOC Container</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/10/15/Spring%20IOC%20Container/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/23/Activationfunction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://raw.githubusercontent.com/sunnygy/blogImages/master/timg.jpg">
-      <meta itemprop="name" content="StoneGY">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Learing warehouse">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/23/Activationfunction/" class="post-title-link" itemprop="url">Activation Functions Introduce</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-09-23 22:17:06" itemprop="dateCreated datePublished" datetime="2020-09-23T22:17:06+08:00">2020-09-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-28 22:40:24" itemprop="dateModified" datetime="2020-09-28T22:40:24+08:00">2020-09-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ML-Basic/" itemprop="url" rel="index"><span itemprop="name">ML Basic</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1-Mish"><a href="#1-Mish" class="headerlink" title="1.Mish"></a><strong>1.Mish</strong></h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/23/Activationfunction/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/15/Spring%20IOC%20Container/" rel="prev" title="spring IOC Container">
+      <i class="fa fa-chevron-left"></i> spring IOC Container
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/23/lookup/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://raw.githubusercontent.com/sunnygy/blogImages/master/timg.jpg">
-      <meta itemprop="name" content="StoneGY">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Learing warehouse">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/23/lookup/" class="post-title-link" itemprop="url">Dependence looking up</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-09-23 22:17:06" itemprop="dateCreated datePublished" datetime="2020-09-23T22:17:06+08:00">2020-09-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-10-17 17:41:45" itemprop="dateModified" datetime="2020-10-17T17:41:45+08:00">2020-10-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1-The-Bean-will-be-built-up-by-inner-AbstractApplicationContext-when-looking-up"><a href="#1-The-Bean-will-be-built-up-by-inner-AbstractApplicationContext-when-looking-up" class="headerlink" title="1.The Bean will be built up by  inner AbstractApplicationContext when looking up"></a>1.The Bean will be built up by  inner AbstractApplicationContext when looking up</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/23/lookup/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/23/nnModel/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://raw.githubusercontent.com/sunnygy/blogImages/master/timg.jpg">
-      <meta itemprop="name" content="StoneGY">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Learing warehouse">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/23/nnModel/" class="post-title-link" itemprop="url">Introduce CLASS torch.NN.Module</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-09-23 22:17:06" itemprop="dateCreated datePublished" datetime="2020-09-23T22:17:06+08:00">2020-09-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-28 22:40:30" itemprop="dateModified" datetime="2020-09-28T22:40:30+08:00">2020-09-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ML-Basic/" itemprop="url" rel="index"><span itemprop="name">ML Basic</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1-why-our-module-must-inherit-the-NN-Model"><a href="#1-why-our-module-must-inherit-the-NN-Model" class="headerlink" title="1.why our module must inherit the NN.Model"></a>1.why our module must inherit the NN.Model</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/23/nnModel/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/23/bean_definition/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://raw.githubusercontent.com/sunnygy/blogImages/master/timg.jpg">
-      <meta itemprop="name" content="StoneGY">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Learing warehouse">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/23/bean_definition/" class="post-title-link" itemprop="url">The lifecycle of Spring Beans</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-09-23 22:17:06" itemprop="dateCreated datePublished" datetime="2020-09-23T22:17:06+08:00">2020-09-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-10-18 17:43:20" itemprop="dateModified" datetime="2020-10-18T17:43:20+08:00">2020-10-18</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Spring-Bean"><a href="#Spring-Bean" class="headerlink" title="[Spring Bean]"></a>[Spring Bean]</h1>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/23/bean_definition/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
   
 
 
@@ -816,6 +446,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%9B%9B%EF%BC%89%E2%80%94%E2%80%94-redis%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">Redis详解（四）—— redis的底层数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E6%BC%94%E7%A4%BA%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.0.1.</span> <span class="nav-text">1、演示数据类型的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.0.2.</span> <span class="nav-text">2、简单动态字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E9%93%BE%E8%A1%A8"><span class="nav-number">1.0.3.</span> <span class="nav-text">3、链表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E5%AD%97%E5%85%B8"><span class="nav-number">1.0.4.</span> <span class="nav-text">4、字典</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E8%B7%B3%E8%B7%83%E8%A1%A8"><span class="nav-number">1.0.5.</span> <span class="nav-text">5、跳跃表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%E3%80%81%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88"><span class="nav-number">1.0.6.</span> <span class="nav-text">6、整数集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7%E3%80%81%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8"><span class="nav-number">1.0.7.</span> <span class="nav-text">7、压缩列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number">1.0.8.</span> <span class="nav-text">8、总结</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
